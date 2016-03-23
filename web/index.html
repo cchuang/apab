@@ -1,0 +1,69 @@
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
+<style type="text/css">
+.holder{
+	margin: 0 auto;
+    width: 765px;
+    height:630px;
+    position:relative;
+}
+.onslideprev{
+	position:absolute;
+	top: 0;
+    width:50%;
+	height:100%;
+}
+.onslidenext{
+	position:absolute;
+	top: 0;
+	left: 382px;
+    width:50%;
+	height:100%;
+}
+
+
+</style>
+<script>
+var curr_page = 0;
+var loadSlide = function() {
+	var slides_url = "data-science-";
+	var max_n = 24;
+	if (curr_page > max_n) {
+		curr_page = 0;
+	} else if (curr_page < 0) {
+		curr_page = max_n;
+	}
+	$('#slides').attr("src", slides_url + curr_page + ".jpg");
+}
+
+$(window).load(function(){
+	loadSlide(curr_page);
+	$('.onslideprev').click(function(){
+		curr_page -= 1;
+		loadSlide();
+		console.log($('#slides').attr("src"));
+	});
+	$('.onslidenext').click(function(){
+		curr_page += 1;
+		loadSlide();
+		console.log($('#slides').attr("src"));
+	});
+});
+
+</script>
+</head>
+<body>
+<div class="holder">
+<img id="slides" width="100%", height="100%"/>
+<div class="onslideprev"></div>
+<div class="onslidenext"></div>
+<a href="http://www.iis.sinica.edu.tw">
+<i class="glyphicon glyphicon-thumbs-up" style="font-size:64px;color:green;"></i>
+</a>
+<i class="glyphicon glyphicon-thumbs-down" style="font-size:64px;color:red;"></i>
+</div>
+
+</body>
+</html>
