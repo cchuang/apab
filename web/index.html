@@ -1,7 +1,10 @@
 <html>
 <head>
+	<meta charset="UTF-8">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
+<!-- 
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
+-->
 <style type="text/css">
 .holder{
 	margin: 0 auto;
@@ -26,30 +29,29 @@
 
 </style>
 <script>
-var curr_page = 0;
+var genList = function(handle, slideno) {
+	$.getJSON( handle, {action: "ls_items"}, function( data ) { 
+		//console.log(data);
+		$("#options").empty();
+		$.each(data, function(i, item) {
+			$("<li>").append($("<a>").attr("href", handle + "?action=do&val=" + encodeURIComponent(item) + "&slideno=" + slideno)
+					.text(item))
+				.appendTo("#options");
+		});
+	});
+}
+
 var loadSlide = function() {
-	var slides_url = "data-science-";
-	var max_n = 24;
-	if (curr_page > max_n) {
-		curr_page = 0;
-	} else if (curr_page < 0) {
-		curr_page = max_n;
-	}
-	$('#slides').attr("src", slides_url + curr_page + ".jpg");
+	$.getJSON( "get_status.php", function( data ) { 
+		$('#slides').attr("src", data.path);
+		console.log(data);
+		genList(data.handle, data.slideno);
+		setTimeout(loadSlide, 2500);
+	});
 }
 
 $(window).load(function(){
-	loadSlide(curr_page);
-	$('.onslideprev').click(function(){
-		curr_page -= 1;
-		loadSlide();
-		console.log($('#slides').attr("src"));
-	});
-	$('.onslidenext').click(function(){
-		curr_page += 1;
-		loadSlide();
-		console.log($('#slides').attr("src"));
-	});
+	loadSlide();
 });
 
 </script>
@@ -57,12 +59,13 @@ $(window).load(function(){
 <body>
 <div class="holder">
 <img id="slides" width="100%", height="100%"/>
-<div class="onslideprev"></div>
-<div class="onslidenext"></div>
+<div id="options"></div>
+<!--
 <a href="http://www.iis.sinica.edu.tw">
 <i class="glyphicon glyphicon-thumbs-up" style="font-size:64px;color:green;"></i>
 </a>
 <i class="glyphicon glyphicon-thumbs-down" style="font-size:64px;color:red;"></i>
+-->
 </div>
 
 </body>
