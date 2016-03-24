@@ -44,7 +44,7 @@ var genList = function(handle, slideno) {
 var loadSlide = function() {
 	$.getJSON( "get_status.php", function( data ) { 
 		$('#slides').attr("src", data.path);
-		console.log(data);
+		//console.log(data);
 		genList(data.handle, data.slideno);
 		setTimeout(loadSlide, 2500);
 	});
