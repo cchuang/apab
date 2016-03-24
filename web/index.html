@@ -2,9 +2,6 @@
 <head>
 	<meta charset="UTF-8">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-<!-- 
-	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
--->
 <style type="text/css">
 .holder{
 	margin: 0 auto;
@@ -12,23 +9,9 @@
     height:630px;
     position:relative;
 }
-.onslideprev{
-	position:absolute;
-	top: 0;
-    width:50%;
-	height:100%;
-}
-.onslidenext{
-	position:absolute;
-	top: 0;
-	left: 382px;
-    width:50%;
-	height:100%;
-}
-
-
 </style>
 <script>
+
 var genList = function(handle, slideno) {
 	$.getJSON( handle, {action: "ls_items"}, function( data ) { 
 		//console.log(data);
@@ -41,17 +24,14 @@ var genList = function(handle, slideno) {
 	});
 }
 
-var loadSlide = function() {
-	$.getJSON( "get_status.php", function( data ) { 
-		$('#slides').attr("src", data.path);
-		//console.log(data);
-		genList(data.handle, data.slideno);
-		setTimeout(loadSlide, 2500);
-	});
-}
-
 $(window).load(function(){
-	loadSlide();
+	var ws = new WebSocket("ws://skyrim3.iis.sinica.edu.tw:5678/");
+	ws.onmessage = function (event) {
+		stat = JSON.parse(event.data);
+		$('#slides').attr("src", stat.path);
+		genList(stat.handle, stat.slideno);
+	};
+
 });
 
 </script>
@@ -60,12 +40,6 @@ $(window).load(function(){
 <div class="holder">
 <img id="slides" width="100%", height="100%"/>
 <div id="options"></div>
-<!--
-<a href="http://www.iis.sinica.edu.tw">
-<i class="glyphicon glyphicon-thumbs-up" style="font-size:64px;color:green;"></i>
-</a>
-<i class="glyphicon glyphicon-thumbs-down" style="font-size:64px;color:red;"></i>
--->
 </div>
 
 </body>
