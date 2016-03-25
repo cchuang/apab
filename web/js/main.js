@@ -3,21 +3,42 @@ var pdf_obj = null;
 
 var changePDFPage = function(pdf, n) {
 	pdf.getPage(n).then(function (page) {
-	  var scale = 0.8;
-	  var viewport = page.getViewport(scale);
+	    var vp_norm = page.getViewport(1);
+	    var scale =  $('.holder').width() / vp_norm.width;
+	    var viewport = page.getViewport(scale);
 
-	  // Prepare canvas using PDF page dimensions.
-	  var canvas = document.getElementById('the-canvas');
-	  var context = canvas.getContext('2d');
-	  canvas.height = viewport.height;
-	  canvas.width = viewport.width;
+	    // Prepare canvas using PDF page dimensions.
+	    var canvas = document.getElementById('the-canvas');
+	    var context = canvas.getContext('2d');
+	    canvas.height = viewport.height;
+	    canvas.width = viewport.width;
 
-	  // Render PDF page into canvas context.
-	  var renderContext = {
-		canvasContext: context,
-		viewport: viewport
-	  };
-	  page.render(renderContext);
+		// Format text-layer position
+        var canvasOffset = $(canvas).offset();
+        var $textLayerDiv = $('#text-layer').css({
+            height : viewport.height+'px',
+            width : viewport.width+'px',
+            //top : canvasOffset.top,
+            //left : canvasOffset.left
+        });
+
+	    // Render PDF page into canvas context.
+	    var renderContext = {
+	        canvasContext: context,
+	        viewport: viewport
+	    };
+	    page.render(renderContext);
+
+        page.getTextContent().then(function(textContent){
+            var textLayer = new TextLayerBuilder({
+                textLayerDiv : $textLayerDiv.get(0),
+                pageIndex : n - 1,
+                viewport : viewport
+            });
+
+            textLayer.setTextContent(textContent);
+            textLayer.render();
+        });
 	});
 }
 
@@ -54,7 +75,6 @@ $(window).load(function(){
 		if (pdf_obj != null) {
 			changePDFPage(pdf_obj, stat.slideno);
 		}
-		//$('#slides').attr("src", stat.path);
 		genList(stat.handle, stat.slideno);
 	};
 

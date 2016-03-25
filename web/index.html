@@ -1,13 +1,16 @@
 <html>
 <head> 
 	<meta charset="UTF-8"> 
+	<link rel="stylesheet" href="text_layer_builder.css" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script> 
 	<script src="js/pdf.min.js"></script> 
+	<script src="js/ui_utils.js"></script>
+	<script src="js/text_layer_builder.js"></script>
 	<script src="js/main.js"></script> 
 	<style type="text/css">
 		.holder{
 			margin: 0 auto;
-			width: 850px;
+			width: 880px;
 			height:850px;
 			position:relative;
 		}
@@ -18,7 +21,7 @@
 		
 		#options li a {
 			text-decoration: none;
-			padding: .3em 3em;
+			padding: .4em 4em;
 			color: #fff;
 			background-color: #036;
 		}
@@ -32,8 +35,8 @@
 </head>
 <body>
 <div class="holder">
-  <canvas id="the-canvas" style="border:1px solid black;">
-  </canvas>
+  <canvas id="the-canvas" style="border:1px solid black;"></canvas>
+    <div id="text-layer" class="textLayer"></div>
 	<!-- <img id="slides" width="100%", height="100%"/> 
 <object data="iispublic-160102031649.pdf" type="application/pdf" width="100%" height="100%">
         alt : <a href="iispublic-160102031649.pdf">iispublic-160102031649.pdf</a>
