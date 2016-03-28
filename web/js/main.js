@@ -65,7 +65,7 @@ var genList = function(handle, slideno) {
 }
 
 $(window).load(function(){
-	var ws = new WebSocket("ws://skyrim3.iis.sinica.edu.tw:5678/");
+	var ws = new WebSocket("ws://skyrim2.iis.sinica.edu.tw/apabws/");
 	ws.onmessage = function (event) {
 		stat = JSON.parse(event.data);
 		if (pdf_path != stat.path) {
