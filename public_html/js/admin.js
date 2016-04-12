@@ -1,5 +1,6 @@
 var pdf_path = null;
 var pdf_obj = null;
+var curr_slide = null;
 
 var renderPDFPages = function(pdf, n, ctn) {
 	pdf.getPage(n).then(function (page) {
@@ -36,6 +37,7 @@ var loadAllSlides = function(pdfpath, n) {
 			singleCtn.append($('<canvas>').attr("id", "slide-" + i));
 			singleCtn.append($('<div>').text(i));
 			$('.holder').append(singleCtn);
+			$('#slide-' + i).get(0).addEventListener('click', changeSlide, false);
 			renderPDFPages(pdf, i, $('#slide-' + i));
 		}
 		highlightCurrentSlide(n);
@@ -43,8 +45,22 @@ var loadAllSlides = function(pdfpath, n) {
 }
 
 var highlightCurrentSlide = function (n) {
+	if (curr_slide != null) {
+		$('#slide-' + curr_slide).parent().css("background-color", "");
+	} 
+	curr_slide = n;
 	$('#slide-' + n).parent().css("background-color", "#80ff80");
 
+}
+
+var changeSlide = function() {
+	feedback = { 
+		action: 'update_page', 
+		slideno: $(this).attr("id").substring(6),
+	};
+	$.ajax("admin_util.php", {
+		data: feedback 
+	});
 }
 
 $(window).load(function(){
@@ -56,7 +72,6 @@ $(window).load(function(){
 			loadAllSlides(pdf_path, stat.slideno);
 		}
 		if (pdf_obj != null) {
-			//renderPDFPages(pdf_obj, stat.slideno);
 			highlightCurrentSlide(stat.slideno);
 		}
 	};

@@ -19,7 +19,7 @@ def query_current_status():
             host='127.0.0.1', 
             database='apab')
     cursor = cnx.cursor()
-    cursor.execute("SELECT status.id,slideno,path,opt_type,events.id,events.name FROM status JOIN events on status.event_id=events.id WHERE events.live=1 ORDER BY `status`.`id` DESC LIMIT 1")
+    cursor.execute("SELECT status.id,slideno,path,opt_type,events.id AS event_id,events.name AS event_name FROM status JOIN events on status.event_id=events.id WHERE events.live=1 ORDER BY `status`.`id` DESC LIMIT 1")
     row = cursor.fetchone()
     cursor.close()
     cnx.close()
