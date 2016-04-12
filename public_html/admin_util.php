@@ -29,13 +29,12 @@ $stmt = $mysqli->stmt_init();
 // update the number of page
 if ($_GET["action"] == "update_page") {
 
-//INSERT INTO status (slideno, path) SELECT slideno + 1 AS slideno, path FROM status ORDER BY idstatus DESC LIMIT 1;
-	$query_str = "SELECT `status`.`id`,slideno,path,opt_type,`events`.`id` AS event_id,events.name AS event_name FROM status JOIN events on status.event_id=events.id WHERE events.live=1 ORDER BY `status`.`id` DESC LIMIT 1";
+	$query_str = "SELECT `status`.`id`,slideno,path,opt_type, status.event_id,events.name AS event_name, default_opt_type FROM status JOIN events on status.event_id=events.id WHERE events.live=1 ORDER BY `status`.`id` DESC LIMIT 1";
 	$res = $mysqli->query($query_str);
 	$ret = $res->fetch_assoc();
 
 	if ($stmt->prepare("INSERT INTO status (event_id, slideno, path, opt_type) VALUES (?, ?, ?, ?)")) {
-		$stmt->bind_param('iiss', $ret["event_id"], $slideno, $ret["path"], $ret['opt_type']);
+		$stmt->bind_param('iiss', $ret["event_id"], $slideno, $ret["path"], $ret['default_opt_type']);
 		$stmt->execute();
 	}
 

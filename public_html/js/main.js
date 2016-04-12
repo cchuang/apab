@@ -2,33 +2,34 @@ var pdf_path = null;
 var pdf_obj = null;
 var stat = null;
 
-var changePDFPage = function(pdf, n) {
+var changePDFPage = function(pdf, n, prefix) {
+	var slideid = "#" + prefix + "-slide";
+	var textid = "#" + prefix + "-text-layer";
+		
 	pdf.getPage(n).then(function (page) {
+		var jqcanvas = $(slideid);
 	    var vp_norm = page.getViewport(1);
-	    var scale =  $('.holder').width() / vp_norm.width;
+	    var scale =  jqcanvas.width() / vp_norm.width;
 	    var viewport = page.getViewport(scale);
 
 	    // Prepare canvas using PDF page dimensions.
-	    var canvas = document.getElementById('the-canvas');
-	    var context = canvas.getContext('2d');
+		var canvas = jqcanvas.get(0);
 	    canvas.height = viewport.height;
 	    canvas.width = viewport.width;
 
-		// Format text-layer position
-        var canvasOffset = $(canvas).offset();
-        var $textLayerDiv = $('#text-layer').css({
-            height : viewport.height+'px',
-            width : viewport.width+'px',
-            //top : canvasOffset.top,
-            //left : canvasOffset.left
-        });
-
 	    // Render PDF page into canvas context.
 	    var renderContext = {
-	        canvasContext: context,
+	        canvasContext: canvas.getContext('2d'),
 	        viewport: viewport
 	    };
 	    page.render(renderContext);
+
+		// Format text-layer position
+        var canvasOffset = jqcanvas.offset();
+        var $textLayerDiv = $(textid).css({
+            height : viewport.height+'px',
+            width : viewport.width+'px',
+        });
 
         page.getTextContent().then(function(textContent){
             var textLayer = new TextLayerBuilder({
@@ -43,13 +44,19 @@ var changePDFPage = function(pdf, n) {
 	});
 }
 
+var changePages = function(pdf, n) {
+	changePDFPage(pdf, n-1, 'prev');
+	changePDFPage(pdf, n, 'curr');
+	changePDFPage(pdf, n+1, 'next');
+}
+
 var loadPDFSlides = function(pdfpath, n) {
 	PDFJS.workerSrc = 'js/pdf.worker.min.js';
 
 	// Fetch the PDF document from the URL using promises.
 	PDFJS.getDocument(pdfpath).then(function (pdf) {
 		pdf_obj = pdf;
-		changePDFPage(pdf, n);
+		changePages(pdf, n);
 	});
 }
 
@@ -60,6 +67,7 @@ var genList = function(stat) {
 		$.each(data, function(i, item) {
 			var aobj = $("<a>");
 			aobj.attr("href", "#").text(item.option);
+			aobj.attr("class", "btn btn-primary btn-lg active navbar-btn");
 			aobj.get(0).addEventListener('click', function(e){sendAssessment(item.id);e.preventDefault();}, false);
 			$("<li>").append(aobj).appendTo("#options");
 		});
@@ -89,7 +97,7 @@ $(window).load(function(){
 			loadPDFSlides(pdf_path, stat.slideno);
 		}
 		if (pdf_obj != null) {
-			changePDFPage(pdf_obj, stat.slideno);
+			changePages(pdf_obj, stat.slideno);
 		}
 		genList(stat);
 	};
