@@ -1,5 +1,6 @@
 var pdf_path = null;
 var pdf_obj = null;
+var stat = null;
 
 var changePDFPage = function(pdf, n) {
 	pdf.getPage(n).then(function (page) {
@@ -52,15 +53,30 @@ var loadPDFSlides = function(pdfpath, n) {
 	});
 }
 
-var genList = function(handle, slideno) {
-	$.getJSON( handle, {action: "ls_items"}, function( data ) { 
+var genList = function(stat) {
+	$.getJSON( "assessment.php", {action: "ls_items", opt_type: stat.opt_type}, function( data ) { 
 		//console.log(data);
 		$("#options").empty();
 		$.each(data, function(i, item) {
-			$("<li>").append($("<a>").attr("href", handle + "?action=do&val=" + encodeURIComponent(item) + "&slideno=" + slideno)
-					.text(item))
-				.appendTo("#options");
+			var aobj = $("<a>");
+			aobj.attr("href", "#").text(item.option);
+			aobj.get(0).addEventListener('click', function(e){sendAssessment(item.id);e.preventDefault();}, false);
+			$("<li>").append(aobj).appendTo("#options");
 		});
+	});
+}
+
+var sendAssessment = function(id) {
+	feedback = { 
+		action: 'do', 
+		opt_id: id, 
+		slideno: stat.slideno, 
+		event_id: stat.event_id, 
+		opt_type: stat.opt_type, 
+		seatno: 1,//TODO: modify this.  
+	};
+	$.ajax("assessment.php", {
+		data: feedback 
 	});
 }
 
@@ -75,7 +91,7 @@ $(window).load(function(){
 		if (pdf_obj != null) {
 			changePDFPage(pdf_obj, stat.slideno);
 		}
-		genList(stat.handle, stat.slideno);
+		genList(stat);
 	};
 
 });

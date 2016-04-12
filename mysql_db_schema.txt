@@ -1,22 +1,43 @@
-CREATE DATABASE `apab` /*!40100 DEFAULT CHARACTER SET latin1 */;
+CREATE DATABASE `apab` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
 CREATE TABLE `audience_resp` (
   `idaudience_resp` int(11) NOT NULL AUTO_INCREMENT,
-  `val` varchar(45) DEFAULT NULL,
+  `event_id` int(11) NOT NULL,
+  `opt_id` int(11) DEFAULT NULL,
+  `opt_type` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `agent` varchar(100) DEFAULT NULL,
+  `agent` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
   `slideno` int(11) DEFAULT NULL,
-  `ip` varchar(45) DEFAULT NULL,
-  `handle` varchar(45) DEFAULT NULL,
+  `ip` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `seatno` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`idaudience_resp`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE TABLE `status` (
-  `idstatus` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `event_id` int(11) NOT NULL,
   `slideno` int(11) NOT NULL,
-  `path` varchar(45) NOT NULL,
+  `path` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `handle` varchar(45) NOT NULL DEFAULT 'assessment.php',
-  PRIMARY KEY (`idstatus`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='current status';
+  `opt_type` varchar(45) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'GENLIKE',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+COMMENT='current status';
+
+CREATE TABLE `events` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
+  `live` int(11) NOT NULL DEFAULT '0',
+  `default_opt_type` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idevents_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+CREATE TABLE `options` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
+  `option` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
