@@ -66,10 +66,10 @@ if (isset($_GET['opt_type'])) {
 
 $optid = $_GET["opt_id"];
 $eventid = $_GET["event_id"];
-//TODO: get user seat
+$seatno = $_GET["seatno"];
 
-if ($stmt->prepare("INSERT INTO audience_resp (opt_type, opt_id, event_id, agent, ip, slideno) VALUES (?, ?, ?, ?, ?, ?)")) {
-	$stmt->bind_param('ssissi', $opt_type, $optid, $eventid, $_SERVER['HTTP_USER_AGENT'], $userip, $slideno);
+if ($stmt->prepare("INSERT INTO audience_resp (opt_type, opt_id, event_id, agent, ip, slideno, seatno) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+	$stmt->bind_param('ssissis', $opt_type, $optid, $eventid, $_SERVER['HTTP_USER_AGENT'], $userip, $slideno, $seatno);
 	$stmt->execute();
 }
 $stmt->close();

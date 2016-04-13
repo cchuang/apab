@@ -81,14 +81,61 @@ var sendAssessment = function(id) {
 		slideno: stat.slideno, 
 		event_id: stat.event_id, 
 		opt_type: stat.opt_type, 
-		seatno: 1,//TODO: modify this.  
+		seatno: Cookies.get('seat'), 
 	};
 	$.ajax("assessment.php", {
 		data: feedback 
 	});
 }
 
+var validateSession = function() {
+	if (Cookies.get('seat') == undefined) {
+		return false;
+	}
+	return true;
+}
+
+var createSession = function() {
+	//check input value here. 
+	var patt = /[A-F][0-9]/i;
+	if (!patt.test($('#seat').val())) {
+		return false;
+	}
+	Cookies.set('seat', $('#seat').val(), {expires: 1});
+	$('#seatview').val(Cookies.get('seat'));
+}
+
 $(window).load(function(){
+	$('#alert-modal').on('hidden.bs.modal', function (e) {
+		$('#myModal').modal('show');
+   	})
+	$('#myModal').on('hidden.bs.modal', function (e) {
+		if (!validateSession()) {
+			$('#alert-modal').modal('show');
+		}
+   	})
+
+	// you cannot focus on an object without seeing it. 
+	$('#myModal').on('shown.bs.modal', function (e) {
+		$('#seat').focus();
+   	})
+	$('#agreement-seat').on('submit', function(e){
+		createSession();
+		$('#myModal').modal('hide');
+		e.preventDefault();
+	});
+
+	$('#seatview').focus(function(e) {
+		$('#myModal').modal('show');
+	});
+
+	if (!validateSession()) {
+		$('#myModal').modal('show');
+	} else {
+		$('#seat').val(Cookies.get('seat'));
+		$('#seatview').val(Cookies.get('seat'));
+	}	
+
 	var ws = new WebSocket("ws://skyrim2.iis.sinica.edu.tw/apabws/");
 	ws.onmessage = function (event) {
 		stat = JSON.parse(event.data);
