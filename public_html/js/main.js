@@ -105,6 +105,21 @@ var createSession = function() {
 	$('#seatview').val(Cookies.get('seat'));
 }
 
+var sendWinEvent = function(val){
+	if (!validateSession() || stat == null) {
+		return;
+	}
+	feedback = { 
+		action: 'winevent', 
+		event_id: stat.event_id, 
+		seatno: Cookies.get('seat'), 
+		'event': val, 
+	};
+	$.ajax("assessment.php", {
+		data: feedback 
+	});
+}
+
 $(window).load(function(){
 	$('#alert-modal').on('hidden.bs.modal', function (e) {
 		$('#myModal').modal('show');
@@ -128,6 +143,10 @@ $(window).load(function(){
 	$('#seatview').focus(function(e) {
 		$('#myModal').modal('show');
 	});
+
+	$(window).on("focus", function(event) { sendWinEvent("focus"); });
+	$(window).on("blur", function(event) { sendWinEvent("blur"); });
+
 
 	if (!validateSession()) {
 		$('#myModal').modal('show');

@@ -37,7 +37,7 @@ if ($_GET["action"] == "ls_items") {
 	exit;
 }
 
-if ($_GET["action"] != "do") {
+if ($_GET["action"] != "do" && $_GET["action"] != "winevent") {
 	exit;
 }
 
@@ -68,10 +68,18 @@ $optid = $_GET["opt_id"];
 $eventid = $_GET["event_id"];
 $seatno = $_GET["seatno"];
 
-if ($stmt->prepare("INSERT INTO audience_resp (opt_type, opt_id, event_id, agent, ip, slideno, seatno) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
-	$stmt->bind_param('ssissis', $opt_type, $optid, $eventid, $_SERVER['HTTP_USER_AGENT'], $userip, $slideno, $seatno);
-	$stmt->execute();
+if ($_GET["action"] == "do") {
+	if ($stmt->prepare("INSERT INTO audience_resp (opt_type, opt_id, event_id, agent, ip, slideno, seatno) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+		$stmt->bind_param('ssissis', $opt_type, $optid, $eventid, $_SERVER['HTTP_USER_AGENT'], $userip, $slideno, $seatno);
+		$stmt->execute();
+	}
+} else if ($_GET["action"] == "winevent") {
+	if ($stmt->prepare("INSERT INTO winevents (event_id, agent, ip, seatno, winevent) VALUES (?, ?, ?, ?, ?)")) {
+		$stmt->bind_param('issss', $eventid, $_SERVER['HTTP_USER_AGENT'], $userip, $seatno, $_GET["event"]);
+		$stmt->execute();
+	}
 }
+
 $stmt->close();
 
 $mysqli->close();
