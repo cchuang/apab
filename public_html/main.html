@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head> 
+	<title>台灣資料科學協會</title>
+	<meta charset="UTF-8"> 
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<link rel="stylesheet" href="text_layer_builder.css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script> 
+	<script src="js/pdf.min.js"></script> 
+	<script src="js/ui_utils.js"></script>
+	<script src="js/text_layer_builder.js"></script>
+	<script src="js/js.cookie.js"></script> 
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	<script src="js/session.js"></script> 
+	<script src="js/main.js"></script> 
+<style>
+.mainrow > * { 
+	/*
+	float: none;
+	display: inline-block; 
+		*/
+}
+.mainrow > *:last-child { 
+	vertical-align: bottom;
+}
+.mainrow > * > canvas { 
+	width:100%; 
+	border:1px solid black;
+}
+</style>
+</head>
+<body>
+	<!-- slides -->
+	<div class="row mainrow"> 
+		<div class="hidden-xs hidden-sm col-md-3"> 
+			<div id="prev-slide-hat"> </div>
+			<canvas id="prev-slide"></canvas> 
+			<div id="prev-text-layer" class="textLayer"></div> 
+		</div>
+		<div class="col-xs-12 col-sm-12 col-md-6"> 
+			<canvas id="curr-slide"></canvas> 
+			<div id="curr-text-layer" class="textLayer"></div> 
+		</div>
+		<div class="hidden-xs hidden-sm col-md-3"> 
+			<div id="next-slide-hat"> </div>
+			<canvas id="next-slide"></canvas> 
+			<div id="next-text-layer" class="textLayer"></div> 
+		</div>
+	</div> 
+	<!-- questionnaire -->
+	<div class="text-center"> 
+		<ul id="options" class="list-inline"> </ul> 
+	</div>
+
+</body>
+</html>

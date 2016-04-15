@@ -4,6 +4,7 @@ var stat = null;
 
 var changePDFPage = function(pdf, n, prefix) {
 	var slideid = "#" + prefix + "-slide";
+	var slidecap = slideid + "-hat";
 	var textid = "#" + prefix + "-text-layer";
 		
 	pdf.getPage(n).then(function (page) {
@@ -24,9 +25,13 @@ var changePDFPage = function(pdf, n, prefix) {
 	    };
 	    page.render(renderContext);
 
+		// Adjust the 'hat' to center the previous and next slide vertically. 
+		$(slidecap).height(($(slideid).height() + 23.8)/2);
+
 		// Format text-layer position
         var canvasOffset = jqcanvas.offset();
         var $textLayerDiv = $(textid).css({
+			top: $(slidecap).height() + 'px', 
             height : viewport.height+'px',
             width : viewport.width+'px',
         });
@@ -41,6 +46,7 @@ var changePDFPage = function(pdf, n, prefix) {
             textLayer.setTextContent(textContent);
             textLayer.render();
         });
+
 	});
 }
 
@@ -88,23 +94,6 @@ var sendAssessment = function(id) {
 	});
 }
 
-var validateSession = function() {
-	if (Cookies.get('seat') == undefined) {
-		return false;
-	}
-	return true;
-}
-
-var createSession = function() {
-	//check input value here. 
-	var patt = /[A-F][0-9]/i;
-	if (!patt.test($('#seat').val())) {
-		return false;
-	}
-	Cookies.set('seat', $('#seat').val(), {expires: 1});
-	$('#seatview').val(Cookies.get('seat'));
-}
-
 var sendWinEvent = function(val){
 	if (!validateSession() || stat == null) {
 		return;
@@ -120,40 +109,19 @@ var sendWinEvent = function(val){
 	});
 }
 
+var resizeHandler = function(event) {
+	changePages(pdf_obj, stat.slideno);
+}
+
 $(window).load(function(){
-	$('#alert-modal').on('hidden.bs.modal', function (e) {
-		$('#myModal').modal('show');
-   	})
-	$('#myModal').on('hidden.bs.modal', function (e) {
-		if (!validateSession()) {
-			$('#alert-modal').modal('show');
-		}
-   	})
 
-	// you cannot focus on an object without seeing it. 
-	$('#myModal').on('shown.bs.modal', function (e) {
-		$('#seat').focus();
-   	})
-	$('#agreement-seat').on('submit', function(e){
-		createSession();
-		$('#myModal').modal('hide');
-		e.preventDefault();
-	});
-
-	$('#seatview').focus(function(e) {
-		$('#myModal').modal('show');
-	});
-
+	$(window).on("resize", resizeHandler); 
 	$(window).on("focus", function(event) { sendWinEvent("focus"); });
 	$(window).on("blur", function(event) { sendWinEvent("blur"); });
 
-
 	if (!validateSession()) {
-		$('#myModal').modal('show');
-	} else {
-		$('#seat').val(Cookies.get('seat'));
-		$('#seatview').val(Cookies.get('seat'));
-	}	
+		window.location.replace("index.html");
+	} 	
 
 	var ws = new WebSocket("ws://skyrim2.iis.sinica.edu.tw/apabws/");
 	ws.onmessage = function (event) {

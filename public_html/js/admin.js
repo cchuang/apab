@@ -63,6 +63,53 @@ var changeSlide = function() {
 	});
 }
 
+var loadIdleUsers = function(d) {
+	feedback = { 
+		action: 'get_idle_users', 
+		duration: d,
+	};
+	$.getJSON( "admin_util.php", feedback, function( data ) { 
+		$("#idle-users").empty();
+
+		$.each(data.obs_users, function(i, item) {
+			var is_idle = true;
+			data.not_idle_users.forEach(function(atom) {
+				if (atom[0] == item) {
+					is_idle = false;
+				}
+			});
+			if (is_idle) {
+				var liobj = $("<li>");
+				liobj.text(item);
+				liobj.appendTo("#idle-users");
+			}
+		});
+	});
+}
+
+var loadUnfocusedUsers = function(d) {
+	feedback = { 
+		action: 'get_unfocused_users', 
+		duration: d,
+	};
+	$.getJSON( "admin_util.php", feedback, function( data ) { 
+		$("#unfocused-users").empty();
+
+		$.each(data, function(i, item) {
+			var liobj = $("<li>");
+			liobj.text(item[0] + "/" + item[1]);
+			liobj.appendTo("#unfocused-users");
+		});
+	});
+}
+
+var poll = function() {
+	var def_duration = 20;
+	loadIdleUsers(def_duration);
+	loadUnfocusedUsers(def_duration);
+	setTimeout(poll, 1000);
+}
+
 $(window).load(function(){
 	var ws = new WebSocket("ws://skyrim2.iis.sinica.edu.tw/apabws/");
 	ws.onmessage = function (event) {
@@ -76,5 +123,6 @@ $(window).load(function(){
 		}
 	};
 
+	poll();
 });
 

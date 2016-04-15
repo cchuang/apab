@@ -7,13 +7,29 @@
 	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 	<link rel="stylesheet" href="text_layer_builder.css" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script> 
-	<script src="js/pdf.min.js"></script> 
-	<script src="js/ui_utils.js"></script>
-	<script src="js/text_layer_builder.js"></script>
-	<script src="js/js.cookie.js"></script> 
 	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-	<script src="js/main.js"></script> 
-<style>
+	<script src="js/js.cookie.js"></script> 
+	<script src="js/session.js"></script> 
+	<script>
+$(window).load(function(){
+	$('#seat').val(Cookies.get('seat'));
+	$('#seat').focus();
+	$('#agreement-seat').on('submit', function(e){
+		if(createSession()) {
+			// you cannot go BACK with this method. 
+			//window.location.replace("main.html");
+			// like you clicked a link. 
+			window.location.href = "main.html";
+		} else {
+			$('#alert-message').removeClass('hidden');
+		}
+		e.preventDefault();
+	});
+
+});
+
+	</script>
+<style type="text/css">
 .mainrow > * { 
 	/* float: none; */
 	display: inline-block; 
@@ -28,78 +44,33 @@
 </style>
 </head>
 <body>
-	<!-- slides -->
-	<div class="row mainrow"> 
-		<div class="hidden-xs hidden-sm col-md-3"> 
-			<canvas id="prev-slide"></canvas> 
-			<div id="prev-text-layer" class="textLayer"></div> 
+	<div class="container"> 
+		<div class="container"> 
+			<h4 class="container" id="myModalLabel">聲明</h4> 
+		</div> 
+		<div class="container">
+			<p>
+			很感謝您願意參與本研究，為了維護您的隱私及個人資料之安全，本團隊承諾將恪遵個人資料保護法令相關規定，僅於研究之目的內，在台灣蒐集處理及利用您的個人基本資料。
+			您得隨時聯絡本團隊，請求查詢，閱覽，製給複製本，補充，更正，刪除，或停止蒐集，處理及利用您的個人資料。本團隊將立即為您處理。 
+			</p>
+			<p>
+			請提供您的座位編號。也請在每講完一張投影片的內容後填寫網頁下方的問卷。
+			</p>
 		</div>
-		<div class="col-xs-12 col-sm-12 col-md-6"> 
-			<canvas id="curr-slide"></canvas> 
-			<div id="curr-text-layer" class="textLayer"></div> 
-		</div>
-		<div class="hidden-xs hidden-sm col-md-3"> 
-			<canvas id="next-slide"></canvas> 
-			<div id="next-text-layer" class="textLayer"></div> 
-		</div>
-	</div> 
-	<!-- questionnaire -->
-	<div class="text-center"> 
-		<ul id="options" class="list-inline"> </ul> 
-		<form class="form-inline"> 
-			<label for="seatview">Seat: </label> 
-			<input type="text" class="form-control" id="seatview"> 
-		</form> 
-	</div>
-
-	<!-- interaction plane --> 
-	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"> 
-		<div class="modal-dialog" role="document"> 
-			<div class="modal-content"> 
-				<div class="modal-header"> 
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> 
-					<h4 class="modal-title" id="myModalLabel">聲明</h4> 
-				</div> 
-				<div class="modal-body">
-					<p>
-					很感謝您願意參與本研究，為了維護您的隱私及個人資料之安全，本團隊承諾將恪遵個人資料保護法令相關規定，僅於研究之目的內，在台灣蒐集處理及利用您的個人基本資料。
-					您得隨時聯絡本團隊，請求查詢，閱覽，製給複製本，補充，更正，刪除，或停止蒐集，處理及利用您的個人資料。本團隊將立即為您處理。 
-					</p>
-					<p>
-					請提供您的座位編號。也請在每講完一張投影片的內容後填寫網頁下方的問卷。
-					</p>
-			   	</div>
-			   	<div class="modal-footer">
-					<form class="form-inline" id="agreement-seat">
-						<div class="form-group"> 
-							<label for="seat">Seat: </label> 
-							<input type="text" class="form-control" id="seat">
-						</div>
-						<button type="submit" class="btn btn-default">同意</button> 
-						<button type="button" class="btn btn-primary" data-dismiss="modal">離開</button> 
-					</form>
-				</div> 
-			</div> 
+		<div class="container">
+			<form class="form-inline" id="agreement-seat">
+				<div class="form-group"> 
+					<label for="seat">座位編號 (e.g. B2): </label> 
+					<input type="text" class="form-control" id="seat">
+				</div>
+				<button type="submit" class="btn btn-default">同意</button> 
+			</form>
+			<p></p>
+			<div class="alert alert-danger fade in hidden" id="alert-message">
+				  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+				  <strong>錯誤</strong> 請填入正確的座位號碼
+			</div>
 		</div> 
 	</div> 
-
-	<!-- interaction plane --> 
-	<div class="modal fade" id="alert-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2"> 
-		<div class="modal-dialog" role="document"> 
-			<div class="modal-content alert alert-danger"> 
-				<div class="modal-header"> 
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> 
-					<h4 class="modal-title" id="myModalLabel2">錯誤</h4> 
-				</div> 
-				<div class="modal-body">
-					請填入正確的座位號碼及按同意離開. 
-			   	</div>
-			   	<div class="modal-footer">
-					<button type="button" class="btn btn-primary" data-dismiss="modal">回到前一步</button> 
-				</div> 
-			</div> 
-		</div> 
-	</div> 
-
 </body>
 </html>
