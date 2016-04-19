@@ -37,7 +37,9 @@ e.g.
 
 ## Source code 
 * https://github.com/cchuang/apab
+
 ### Description
+
 ```
 ├── apab_webd.py - websocket server. bind on localhost:5678
 ├── auto_increment.sh - a gadget for changing slides. 
@@ -68,19 +70,22 @@ e.g.
 ```
 
 ## Prerequisite
+
 ### Python 
 * At least Python 3.4 
-* pip packages
-** mysql-connector-python
-** websockets
+#### packages
+* mysql-connector-python
+* websockets
+
 ### Apache2
 * 2.4.7
 * mod\_proxy\_wstunnel 
+
 ### MySQL
 
 ## Face detetion program (face\_dtct.py)
 ### Dependency
-* python 3
-** dlib
-** scikit-image
+#### python 3
+* dlib
+* scikit-image
 
